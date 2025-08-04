@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Store</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <!-- 🔐 Login / Welcome Section -->
+    {% if user.is_authenticated %}
+        <p>👋 Hello, {{ user.username }} | <a href="{% url 'logout' %}">Logout</a></p>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a> |
+        <a href="{% url 'register' %}">Register</a>
+    {% endif %}
+
+    <!-- 🛒 View Cart Link -->
+    <p><a href="{% url 'view_cart' %}">🛒 View Cart</a></p>
+
+    <h1>🛍️ Welcome to Our Store</h1>
+    <p>Our Products:</p>
+
+    <div>
+        {% for product in products %}
+            <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+                <!-- 📦 Clickable Product Name -->
+                <h2>
+                    <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+                </h2>
+
+                <p>{{ product.description }}</p>
+                <p><strong>Price: ₹{{ product.price }}</strong></p>
+
+                {% if product.image %}
+                    <a href="{% url 'product_detail' product.id %}">
+                        <img src="{{ product.image }}" width="150">
+                    </a>
+                {% endif %}
+
+                <!-- 🛒 Add to Cart -->
+                <form action="{% url 'add_to_cart' product.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Add to Cart 🛒</button>
+                </form>
+            </div>
+        {% empty %}
+            <p>No products available!</p>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
